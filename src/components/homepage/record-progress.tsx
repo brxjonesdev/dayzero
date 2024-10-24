@@ -10,6 +10,23 @@ import {
 import { Button } from '../ui/button';
 import { Target } from 'lucide-react';
 
+{
+  /*
+  export type Entry = {
+  id: string;
+  date: string;
+  goal_id: string;
+  tags: Tag[];
+  notes: {
+    content: string;
+    created_at: string;
+  }[];
+  isPinned: boolean;
+};
+  
+  */
+}
+
 export default function RecordProgress() {
   return (
     <Dialog>

@@ -31,7 +31,7 @@ import {
 }
 
 export default function Entries() {
-  const { showPinned, entries } = useAppStore((state) => state);
+  const { showPinned, entries, editEntry, deleteEntry, togglePinned } = useAppStore((state) => state);
 
   function formatTime(isoString: string): string {
     const date = new Date(isoString);
@@ -45,6 +45,10 @@ export default function Entries() {
       day: 'numeric',
       weekday: 'short',
     });
+  }
+
+  function onPinToggle(entryId: string) {
+    togglePinned(entryId);
   }
 
   return (

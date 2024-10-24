@@ -1,9 +1,6 @@
-# What is left to do so far
-
-- Code needs to be refactored
-- Google OAuth
-- Card needs to be tweaked
-- Set up Database Schema
-- Set up Goals Dialog
-
-#
+# CheckIN
+- Edit, Delete Pin Posts
+- Custom Tags
+- Record Progress
+- Auth and Database
+- Final Refactor and Polish

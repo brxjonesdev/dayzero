@@ -18,6 +18,7 @@ export type Entry = {
   id: string;
   date: string;
   goal_id: string;
+  feeling: number
   tags: Tag[];
   notes: {
     content: string;
@@ -38,6 +39,8 @@ export type AppState = {
 
 export type AppActions = {
   addGoal: (goal: Goal) => void;
+  editGoal: (goalId: string, updatedGoal: Goal) => void;
+  deleteGoal: (goalId: string) => void;
   setQuery: (query: string) => void;
   removeGoal: (goalId: string) => void;
   addEntry: (entry: Entry) => void;
@@ -45,6 +48,7 @@ export type AppActions = {
   editEntry: (entryId: string, updatedEntry: Entry) => void;
   addCustomTag: (tag: Tag) => void;
   togglePinned: () => void;
+  toggleGoalCompletion: (goalId: string) => void;
 };
 
 export type AppStore = AppState & AppActions;
@@ -64,9 +68,10 @@ export const defaultInitState: AppState = {
   entries: [
     {
       id: '1',
-      date: '2023-01-01',
+      date: '1-31-2024',
       goal_id: '1',
       tags: [{ id: '1', name: 'React', hex_color: '#61DAFB' }],
+      feeling: 4,
       notes: [
         { content: 'Started learning React today!', created_at: '2023-01-01T10:00:00Z' },
         { content: 'Built a simple app.', created_at: '2023-01-02T10:00:00Z' },
@@ -94,6 +99,17 @@ export const createAppStore = (initState: AppState = defaultInitState) => {
   return createStore<AppStore>()((set) => ({
     ...initState,
     addGoal: (goal) => set((state) => ({ goals: [...state.goals, goal] })),
+    editGoal: (goalId, updatedGoal) =>
+      set((state) => ({
+        goals: state.goals.map((goal) => (goal.id === goalId ? updatedGoal : goal)),
+      })),
+    deleteGoal: (goalId) => set((state) => ({ goals: state.goals.filter((g) => g.id !== goalId) })),
+    toggleGoalCompletion: (goalId) =>
+      set((state) => ({
+        goals: state.goals.map((goal) =>
+          goal.id === goalId ? { ...goal, completed: !goal.completed } : goal
+        ),
+      })),
     togglePinned: () => set((state) => ({ showPinned: !state.showPinned })),
     setQuery: (query) => set({ searchQuery: query }),
     removeGoal: (goalId) => set((state) => ({ goals: state.goals.filter((g) => g.id !== goalId) })),
@@ -106,4 +122,5 @@ export const createAppStore = (initState: AppState = defaultInitState) => {
         entries: state.entries.map((entry) => (entry.id === entryId ? updatedEntry : entry)),
       })),
   }));
+
 };

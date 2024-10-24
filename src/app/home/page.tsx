@@ -24,6 +24,7 @@ export default function Homepage() {
       <Separator className="shadow-md" />
       <section className="w-full container px-4 flex-1 md:flex mb-4 gap-6 overflow-y-scroll">
         <MoodGrid />
+        <Separator orientation='vertical'/>
         <Entries />
       </section>
     </>
