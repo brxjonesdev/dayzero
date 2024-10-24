@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import React from 'react';
-import { BentoGrid, BentoGridItem } from '@/components/bento-grid';
+import { BentoGrid, BentoGridItem } from '@/components/ui/bento-grid';
 import { Goal, Heart, Loader2Icon, Notebook } from 'lucide-react';
 import Link from 'next/link';
 

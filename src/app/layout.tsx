@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
-import { ThemeProvider } from '@/components/theme-provider';
-import { ModeToggle } from '@/components/theme-toggle';
+import { ThemeProvider } from '@/components/ui/theme-provider';
+import { ModeToggle } from '@/components/ui/theme-toggle';
 import { Separator } from '@/components/ui/separator';
+import { AppStoreProvider } from '@/providers/app-store-provider';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -41,7 +42,7 @@ export default function RootLayout({
               <ModeToggle />
             </header>
             <Separator />
-            {children}
+            <AppStoreProvider>{children}</AppStoreProvider>
           </main>
         </ThemeProvider>
       </body>
