@@ -14,6 +14,7 @@ export default function AboutDayZero() {
       console.error('Error logging out:', error.message);
       return;
     }
+    console.log('Logged out successfully');
     router.push('/')
   };
   return <Button className="font-onest" onClick={handleLogout}>About DayZero</Button>;

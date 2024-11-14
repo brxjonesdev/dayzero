@@ -33,11 +33,11 @@ export type User = {
   id: string;
   aud: string;
   role?: string | undefined;
-  email: string;
-  email_confirmed_at: string;
-  phone: string;
-  confirmed_at: string;
-  last_sign_in_at: string;
+  email?: string | undefined;
+  email_confirmed_at?: string | undefined;
+  phone?: string | undefined;
+  confirmed_at?: string | undefined;
+  last_sign_in_at?: string | undefined;
   app_metadata: AppMetadata;
   user_metadata: UserMetadata;
   identities: Identity[];

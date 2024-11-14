@@ -15,8 +15,7 @@ export default async function JournalHeader() {
       </div>
 
       <div className="flex gap-4 items-center">
-        {/* {user && <MiniUserData user={user} /> } */}
-        <ModeToggle />
+             <ModeToggle />
       </div>
     </header>
   );

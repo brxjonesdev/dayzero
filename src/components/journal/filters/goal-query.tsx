@@ -1,5 +1,5 @@
 import React from 'react';
-import { Label } from '../shadcn/ui/label';
+import { Label } from '../../shadcn/ui/label';
 import {
   Select,
   SelectContent,
@@ -10,16 +10,16 @@ import {
 
 export default function GoalQuery() {
   return (
-    <div className="font-onest flex flex-col gap-4 justify-center w-3/12 ">
+    <div className="font-onest flex flex-col gap-4 justify-center w-full ">
       <Label>Select a Goal</Label>
       <Select>
         <SelectTrigger className="w-full justify-self-center">
           <SelectValue placeholder="Theme" />
         </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="light">Light</SelectItem>
-          <SelectItem value="dark">Dark</SelectItem>
-          <SelectItem value="system">System</SelectItem>
+        <SelectContent className='font-onest'>
+          <SelectItem value="light" className='font-onest'>Light</SelectItem>
+          <SelectItem value="dark" className='font-onest'>Dark</SelectItem>
+          <SelectItem value="system" className='font-onest'>System</SelectItem>
         </SelectContent>
       </Select>
     </div>

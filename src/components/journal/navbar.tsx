@@ -16,7 +16,7 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="font-onest">
+    <nav className="font-onest hidden lg:block">
       <ul className="flex gap-4">
         {navItems.map((item) => (
           <Link key={item.path} href={item.path}>
