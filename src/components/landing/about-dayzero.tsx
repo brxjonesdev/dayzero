@@ -15,7 +15,11 @@ export default function AboutDayZero() {
       return;
     }
     console.log('Logged out successfully');
-    router.push('/')
+    router.push('/');
   };
-  return <Button className="font-onest" onClick={handleLogout}>About DayZero</Button>;
+  return (
+    <Button className="font-onest" onClick={handleLogout}>
+      About DayZero
+    </Button>
+  );
 }

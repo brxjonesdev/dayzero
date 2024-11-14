@@ -10,7 +10,7 @@ export default function LoginButton() {
   const supabase = createClient();
   const provider = 'google';
   const [user, setUser] = useState<User | null>(null);
-  
+
   const handleLogin = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
@@ -22,7 +22,7 @@ export default function LoginButton() {
         },
       },
     });
-    
+
     if (error) {
       console.error('Error logging in:', error.message);
     }
@@ -44,7 +44,10 @@ export default function LoginButton() {
   return (
     <div>
       {user ? (
-        <Button className="font-onest text" onClick={() => router.push('/journal')}>
+        <Button
+          className="font-onest text"
+          onClick={() => router.push('/journal')}
+        >
           Go to Journal
         </Button>
       ) : (

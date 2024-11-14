@@ -15,7 +15,7 @@ export default async function JournalHeader() {
       </div>
 
       <div className="flex gap-4 items-center">
-             <ModeToggle />
+        <ModeToggle />
       </div>
     </header>
   );

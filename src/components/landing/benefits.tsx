@@ -28,7 +28,8 @@ export default function Benefits() {
               Increased Clarity
             </h2>
             <p className="text-base leading-relaxed tracking-tight text-muted-foreground max-w-xl text-left">
-              Reflecting on your thoughts and emotions leads to better decision-making and mental clarity.
+              Reflecting on your thoughts and emotions leads to better
+              decision-making and mental clarity.
             </p>
           </div>
           <div className="flex gap-0 flex-col justify-between p-6  rounded-md border-cyan-300 dark:border-fuchsia-600 border-2">
@@ -37,27 +38,28 @@ export default function Benefits() {
               Goal Achievement
             </h2>
             <p className="text-base leading-relaxed tracking-tight text-muted-foreground max-w-xl text-left">
-              Setting and reviewing goals improves focus and motivates you to stay on track.
+              Setting and reviewing goals improves focus and motivates you to
+              stay on track.
             </p>
           </div>
           <div className="flex gap-0 flex-col justify-between p-6  rounded-md border-cyan-300 dark:border-fuchsia-600 border-2">
             <MoveUpRight className="w-4 h-4 mb-10 text-primary" />
             <h2 className="text-4xl tracking-tighter max-w-xl text-left font-regular flex flex-row gap-4 items-end">
               Mood Awareness
-            
             </h2>
             <p className="text-base leading-relaxed tracking-tight text-muted-foreground max-w-xl text-left">
-              Tracking your mood helps identify patterns, boosting emotional awareness and well-being.
+              Tracking your mood helps identify patterns, boosting emotional
+              awareness and well-being.
             </p>
           </div>
           <div className="flex gap-0 flex-col justify-between p-6  rounded-md border-cyan-300 dark:border-fuchsia-600 border-2">
             <MoveUpRight className="w-4 h-4 mb-10 text-primary" />
             <h2 className="text-4xl tracking-tighter max-w-xl text-left font-regular flex flex-row gap-4 items-end">
               Reduced Stress
-            
             </h2>
             <p className="text-base leading-relaxed tracking-tight text-muted-foreground max-w-xl text-left">
-              Journaling regularly can reduce stress and help process emotions in a healthy way.
+              Journaling regularly can reduce stress and help process emotions
+              in a healthy way.
             </p>
           </div>
         </div>

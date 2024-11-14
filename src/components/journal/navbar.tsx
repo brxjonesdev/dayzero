@@ -6,13 +6,14 @@ import React from 'react';
 
 export default function Navbar() {
   const pathname = usePathname();
+  console.log(pathname);
 
   const navItems = [
-    { name: 'Journal', path: '/journal' },
-    { name: 'Goals', path: '/goals' },
-    { name: 'Tags', path: '/tags' },
-    { name: 'Settings', path: '/settings' },
-    { name: 'Account', path: '/account' },
+    { name: 'Home', path: '/journal/home' },
+    { name: 'Goals', path: '/journal/goals' },
+    { name: 'Tags', path: '/journal/tags' },
+    { name: 'Settings', path: '/journal/settings' },
+    { name: 'Account', path: '/journal/account' },
   ];
 
   return (

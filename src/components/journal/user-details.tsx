@@ -15,22 +15,24 @@ import {
 import { Button } from '../shadcn/ui/button';
 import { Filter, MenuSquare, Plus } from 'lucide-react';
 import { createClient } from '@/utils/supabase/server';
-import {User} from "@/utils/supabase/types"
+import { User } from '@/utils/supabase/types';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/shadcn/ui/popover"
+} from '@/components/shadcn/ui/popover';
+import AddEntryButton from './utils/add-entry';
 
-
-export default async function UserDetails() {
+export default async function UserDetails({ goals, tags }: { goals: string[]; tags: string[] }) {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
- const User: User | null = user;
-  const name = 'Irene';
-  const greeting = 'Good Afternoon,';
+  const User: User | null = user;
+  const greeting =
+    new Date().getHours() < 12 ? 'Good Morning,' : 'Good Afternoon,';
+
+
   return (
     <Card className="font-onest w-full">
       <CardHeader className="flex-row items-center gap-2">
@@ -47,26 +49,28 @@ export default async function UserDetails() {
           <CardDescription>What will you accomplish today?</CardDescription>
         </div>
       </CardHeader>
-      <CardFooter className="gap-4 flex-col lg:flex-row">
-        <Button className="w-full">
-          <Plus />
-          Add Journal Entry
-        </Button>
-        <div className='w-full flex gap-4 justify-end lg:block'>
-          <Button className='hidden lg:block w-full'>Desktop Function</Button>
-          <Button className='lg:hidden w-fit px-7'><MenuSquare/></Button>
+      <CardFooter className="gap-4 flex-col lg:flex-row ">
+        <AddEntryButton 
+          user_id={User?.id}
+          tags={tags}
+          goals={goals}
+        />
+        <div className="w-full flex gap-4 justify-end lg:hidden">
+          <Button className="lg:hidden w-fit px-7">
+            <MenuSquare />
+          </Button>
           <Popover>
-  <PopoverTrigger asChild>
-    <Button className='lg:hidden w-fit'>Filters <Filter/></Button>
-  </PopoverTrigger>
-  <PopoverContent className='w-full'>Place content for the popover here.</PopoverContent>
-</Popover>
-
-
+            <PopoverTrigger asChild>
+              <Button className="lg:hidden w-fit">
+                Filters <Filter />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-full">
+              Place content for the popover here.
+            </PopoverContent>
+          </Popover>
         </div>
-        
       </CardFooter>
-      
     </Card>
   );
 }

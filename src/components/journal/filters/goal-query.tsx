@@ -16,10 +16,16 @@ export default function GoalQuery() {
         <SelectTrigger className="w-full justify-self-center">
           <SelectValue placeholder="Theme" />
         </SelectTrigger>
-        <SelectContent className='font-onest'>
-          <SelectItem value="light" className='font-onest'>Light</SelectItem>
-          <SelectItem value="dark" className='font-onest'>Dark</SelectItem>
-          <SelectItem value="system" className='font-onest'>System</SelectItem>
+        <SelectContent className="font-onest">
+          <SelectItem value="light" className="font-onest">
+            Light
+          </SelectItem>
+          <SelectItem value="dark" className="font-onest">
+            Dark
+          </SelectItem>
+          <SelectItem value="system" className="font-onest">
+            System
+          </SelectItem>
         </SelectContent>
       </Select>
     </div>
