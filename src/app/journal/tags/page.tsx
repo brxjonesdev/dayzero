@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Plus, Pencil, Trash2, Tag } from 'lucide-react';
 import { Button } from '@/components/shadcn/ui/button';
 import { Input } from '@/components/shadcn/ui/input';
@@ -20,6 +20,8 @@ import {
   DialogTrigger,
 } from '@/components/shadcn/ui/dialog';
 import { Label } from '@/components/shadcn/ui/label';
+import { createClient } from '@/utils/supabase/client';
+import { nanoid } from 'nanoid';
 
 interface TagType {
   id: number;
@@ -27,31 +29,82 @@ interface TagType {
   value: string;
 }
 
-const initialTags: TagType[] = [
-  { id: 1, label: 'Personal', value: 'personal' },
-];
-
 export default function TagManagement() {
-  const [tags, setTags] = useState<TagType[]>(initialTags);
+  const supabase = createClient();
+  const [tags, setTags] = useState<TagType[] | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
   const [newTag, setNewTag] = useState({ label: '', value: '' });
   const [editingTag, setEditingTag] = useState<TagType | null>(null);
 
-  const addTag = () => {
-    if (newTag.label && newTag.value) {
-      setTags([...tags, { id: Date.now(), ...newTag }]);
-      setNewTag({ label: '', value: '' });
+  useEffect(() => {
+    const fetchTags = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const { data: tags, error } = await supabase
+        .from('tags')
+        .select('*')
+        .eq('user_id', user?.id);
+
+      if (error) {
+        console.error('Error fetching tags:', error);
+      }
+      if (tags) {
+        setTags(tags);
+        setUserId(user?.id);
+      }
+    };
+    fetchTags();
+  }, []);
+
+  const addTag = async () => {
+    if (newTag.label && newTag.value && userId) {
+      const { data, error } = await supabase
+        .from('tags')
+        .insert({
+          label: newTag.label,
+          value: newTag.value,
+          user_id: userId,
+          tag_id: `tag_${nanoid(15)}-${nanoid(3)}`,
+        })
+        .select();
+
+      if (error) {
+        console.error('Error adding tag:', error);
+      } else if (data) {
+        setTags([...(tags || []), data[0]]);
+        setNewTag({ label: '', value: '' });
+      }
     }
   };
 
-  const updateTag = () => {
+  const updateTag = async () => {
     if (editingTag) {
-      setTags(tags.map((tag) => (tag.id === editingTag.id ? editingTag : tag)));
-      setEditingTag(null);
+      const { error } = await supabase
+        .from('tags')
+        .update({ label: editingTag.label, value: editingTag.value })
+        .eq('id', editingTag.id);
+
+      if (error) {
+        console.error('Error updating tag:', error);
+      } else {
+        setTags(
+          tags?.map((tag) => (tag.id === editingTag.id ? editingTag : tag)) ||
+            null
+        );
+        setEditingTag(null);
+      }
     }
   };
 
-  const deleteTag = (id: number) => {
-    setTags(tags.filter((tag) => tag.id !== id));
+  const deleteTag = async (id: number) => {
+    const { error } = await supabase.from('tags').delete().eq('id', id);
+
+    if (error) {
+      console.error('Error deleting tag:', error);
+    } else {
+      setTags(tags?.filter((tag) => tag.id !== id) || null);
+    }
   };
 
   return (
@@ -103,8 +156,18 @@ export default function TagManagement() {
           </CardFooter>
         </Card>
 
-        {tags.length === 0 ? (
-          <Card className="col-span-full w-8/12 ">
+        {tags === null ? (
+          <Card className="col-span-full w-8/12">
+            <CardContent className="flex flex-col items-center justify-center py-12 h-full">
+              <Tag className="h-12 w-12 text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold mb-2">Loading...</h3>
+              <p className="text-muted-foreground text-center">
+                Please wait while we fetch your tags.
+              </p>
+            </CardContent>
+          </Card>
+        ) : tags.length === 0 ? (
+          <Card className="col-span-full w-8/12">
             <CardContent className="flex flex-col items-center justify-center py-12 h-full">
               <Tag className="h-12 w-12 text-muted-foreground mb-4" />
               <h3 className="text-lg font-semibold mb-2">No tags yet</h3>
@@ -150,11 +213,10 @@ export default function TagManagement() {
                             id="edit-label"
                             value={editingTag?.label || ''}
                             onChange={(e) =>
-                              setEditingTag(
-                                editingTag
-                                  ? { ...editingTag, label: e.target.value }
-                                  : null
-                              )
+                              setEditingTag({
+                                ...editingTag!,
+                                label: e.target.value,
+                              })
                             }
                           />
                         </div>
@@ -164,11 +226,10 @@ export default function TagManagement() {
                             id="edit-value"
                             value={editingTag?.value || ''}
                             onChange={(e) =>
-                              setEditingTag(
-                                editingTag
-                                  ? { ...editingTag, value: e.target.value }
-                                  : null
-                              )
+                              setEditingTag({
+                                ...editingTag!,
+                                value: e.target.value,
+                              })
                             }
                           />
                         </div>

@@ -31,42 +31,86 @@ import {
   DialogTrigger,
 } from '@/components/shadcn/ui/dialog';
 
-export default function JournalEntryForm({ goals, tags, user_id }) {
+type Tag = {
+  id: string;
+  created_at: string;
+  user_id: string;
+  label: string;
+  value: string;
+  tag_id: string;
+};
+
+type Tags = Tag[];
+
+type Goal = {
+  id: string;
+  user_id: string;
+  title: string;
+  description: string;
+  goal_id: string;
+};
+
+type Goals = Goal[];
+
+export default function JournalEntryForm({
+  goals,
+  tags,
+  user_id,
+}: {
+  goals: Goals;
+  tags: Tags;
+  user_id: string;
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [content, setContent] = useState('');
   const [selectedGoal, setSelectedGoal] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [newGoal, setNewGoal] = useState('');
   const [newTag, setNewTag] = useState('');
-  const [currentGoals, setGoals] = useState(goals);
-  const [currentTags, setTags] = useState(tags);
+  const [currentGoals, setGoals] = useState<Goals>(goals);
+  const [currentTags, setTags] = useState<Tags>(tags);
 
   const handleAddGoal = () => {
-    if (newGoal && !currentGoals.includes(newGoal)) {
-      setGoals([...currentGoals, newGoal]);
-      setSelectedGoal(newGoal);
+    if (newGoal && !currentGoals.some((goal) => goal.title === newGoal)) {
+      const newGoalObj = {
+        id: `${Date.now()}`,
+        user_id,
+        title: newGoal,
+        description: '', // Optional: Update this if you have a description for new goals
+        goal_id: `${Date.now()}_${newGoal}`,
+      };
+      setGoals([...currentGoals, newGoalObj]);
+      setSelectedGoal(newGoalObj.goal_id);
       setNewGoal('');
     }
   };
 
   const handleAddTag = () => {
-    if (newTag && !currentTags.includes(newTag)) {
-      setTags([...currentTags, newTag]);
+    const newTagObj = {
+      id: `${Date.now()}`,
+      created_at: new Date().toISOString(),
+      user_id,
+      label: newTag,
+      value: newTag.toLowerCase(),
+      tag_id: `${Date.now()}_${newTag}`,
+    };
+    if (newTag && !currentTags.some((tag) => tag.label === newTag)) {
+      setTags([...currentTags, newTagObj]);
       setSelectedTags([...selectedTags, newTag]);
       setNewTag('');
     }
   };
 
-  const handleTagSelect = (tag: string) => {
+  const handleTagSelect = (tagLabel: string) => {
     setSelectedTags(
-      selectedTags.includes(tag)
-        ? selectedTags.filter((t) => t !== tag)
-        : [...selectedTags, tag]
+      selectedTags.includes(tagLabel)
+        ? selectedTags.filter((t) => t !== tagLabel)
+        : [...selectedTags, tagLabel]
     );
   };
 
-  const handleRemoveTag = (tag: string) => {
-    setSelectedTags(selectedTags.filter((t) => t !== tag));
+  const handleRemoveTag = (tagLabel: string) => {
+    setSelectedTags(selectedTags.filter((t) => t !== tagLabel));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -79,12 +123,10 @@ export default function JournalEntryForm({ goals, tags, user_id }) {
       pinned: false,
     };
     console.log('Saving entry:', entry);
-    // Here you would typically send this data to your backend or state management system
   };
 
   const handleOpen = () => {
     setIsOpen(true);
-    // Reset goals and tags to initial values on open
     setGoals(goals);
     setTags(tags);
   };
@@ -96,7 +138,6 @@ export default function JournalEntryForm({ goals, tags, user_id }) {
     setNewGoal('');
     setNewTag('');
     setIsOpen(false);
-    // Reset goals and tags to initial values on close
     setGoals(goals);
     setTags(tags);
   };
@@ -134,14 +175,17 @@ export default function JournalEntryForm({ goals, tags, user_id }) {
                   {currentGoals.length > 0 && (
                     <>
                       <Label htmlFor="goal">Goal</Label>
-                      <Select value={selectedGoal} onValueChange={setSelectedGoal}>
+                      <Select
+                        value={selectedGoal}
+                        onValueChange={setSelectedGoal}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Select a goal" />
                         </SelectTrigger>
                         <SelectContent>
                           {currentGoals.map((goal) => (
-                            <SelectItem key={goal} value={goal}>
-                              {goal}
+                            <SelectItem key={goal.goal_id} value={goal.goal_id}>
+                              {goal.title}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -165,14 +209,16 @@ export default function JournalEntryForm({ goals, tags, user_id }) {
                   <div className="flex flex-wrap gap-2">
                     {currentTags.map((tag) => (
                       <Badge
-                        key={tag}
+                        key={tag.id}
                         variant={
-                          selectedTags.includes(tag) ? 'default' : 'outline'
+                          selectedTags.includes(tag.label)
+                            ? 'default'
+                            : 'outline'
                         }
                         className="cursor-pointer"
-                        onClick={() => handleTagSelect(tag)}
+                        onClick={() => handleTagSelect(tag.label)}
                       >
-                        {tag}
+                        {tag.label}
                       </Badge>
                     ))}
                   </div>
@@ -192,19 +238,19 @@ export default function JournalEntryForm({ goals, tags, user_id }) {
                   <div className="space-y-2">
                     <Label>Selected Tags</Label>
                     <div className="flex flex-wrap gap-2">
-                      {selectedTags.map((tag) => (
+                      {selectedTags.map((tagLabel) => (
                         <Badge
-                          key={tag}
+                          key={tagLabel}
                           variant="secondary"
                           className="pl-2 pr-1 py-1 flex items-center space-x-1"
                         >
-                          <span>{tag}</span>
+                          <span>{tagLabel}</span>
                           <Button
                             type="button"
                             variant="ghost"
                             size="icon"
                             className="h-4 w-4 p-0"
-                            onClick={() => handleRemoveTag(tag)}
+                            onClick={() => handleRemoveTag(tagLabel)}
                           >
                             <X className="h-3 w-3" />
                           </Button>
@@ -214,7 +260,7 @@ export default function JournalEntryForm({ goals, tags, user_id }) {
                   </div>
                 )}
               </CardContent>
-              <CardFooter className='px-0 space-x-4'>
+              <CardFooter className="px-0 space-x-4">
                 <DialogClose onClick={handleClose} className="w-full" asChild>
                   <Button variant="ghost" className="w-full">
                     Cancel

@@ -6,10 +6,20 @@ import {
 import { Label } from '@/components/shadcn/ui/label';
 import { Badge } from '@/components/shadcn/ui/badge';
 import { Button } from '@/components/shadcn/ui/button';
+import Link from 'next/link';
 
-const tags = [{ label: 'Personal', value: 'personal' }];
+type Tag = {
+  id: string;
+  created_at: string;
+  user_id: string;
+  label: string;
+  value: string;
+  tag_id: string;
+};
 
-export default function TagQuery() {
+type Tags = Tag[];
+
+export default function TagQuery({ tags }: { tags: Tags }) {
   return (
     <div className="font-onest space-y-2 flex justify-center flex-col w-full">
       <div className="flex justify-between items-center w-full">
@@ -31,9 +41,9 @@ export default function TagQuery() {
           </ToggleGroupItem>
         ))}
         {!tags.length && (
-          <Button className="text-xs mx-auto" variant={'link'}>
+          <Link className="text-xs mx-auto" href={"/journal/tags"}>
             Add Tags
-          </Button>
+          </Link>
         )}
       </ToggleGroup>
     </div>

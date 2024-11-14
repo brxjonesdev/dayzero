@@ -10,7 +10,7 @@ import { Input } from '@/components/shadcn/ui/input';
 import { Label } from '@/components/shadcn/ui/label';
 import { Separator } from '@/components/shadcn/ui/separator';
 
-export default function TagManagement() {
+export default function Settings() {
   return (
     <main className="flex-1 flex flex-row font-onest p-6 overflow-y-scroll w-full">
       <div className="w-5/12 flex justify-end pr-12">

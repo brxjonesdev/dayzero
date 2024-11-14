@@ -13,7 +13,6 @@ export default function Navbar() {
     { name: 'Goals', path: '/journal/goals' },
     { name: 'Tags', path: '/journal/tags' },
     { name: 'Settings', path: '/journal/settings' },
-    { name: 'Account', path: '/journal/account' },
   ];
 
   return (

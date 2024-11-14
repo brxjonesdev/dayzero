@@ -23,7 +23,24 @@ import {
 } from '@/components/shadcn/ui/popover';
 import AddEntryButton from './utils/add-entry';
 
-export default async function UserDetails({ goals, tags }: { goals: string[]; tags: string[] }) {
+type Tag = {
+  id: string;
+  created_at: string;
+  user_id: string;
+  label: string;
+  value: string;
+  tag_id: string;
+};
+
+type Tags = Tag[];
+
+export default async function UserDetails({
+  goals,
+  tags,
+}: {
+  goals: string[];
+  tags: Tags;
+}) {
   const supabase = await createClient();
   const {
     data: { user },
@@ -31,7 +48,6 @@ export default async function UserDetails({ goals, tags }: { goals: string[]; ta
   const User: User | null = user;
   const greeting =
     new Date().getHours() < 12 ? 'Good Morning,' : 'Good Afternoon,';
-
 
   return (
     <Card className="font-onest w-full">
@@ -50,11 +66,7 @@ export default async function UserDetails({ goals, tags }: { goals: string[]; ta
         </div>
       </CardHeader>
       <CardFooter className="gap-4 flex-col lg:flex-row ">
-        <AddEntryButton 
-          user_id={User?.id}
-          tags={tags}
-          goals={goals}
-        />
+        <AddEntryButton user_id={User?.id} tags={tags} goals={goals} />
         <div className="w-full flex gap-4 justify-end lg:hidden">
           <Button className="lg:hidden w-fit px-7">
             <MenuSquare />

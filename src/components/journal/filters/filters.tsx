@@ -13,16 +13,38 @@ import { Separator } from '@/components/shadcn/ui/separator';
 import GridToggle from './grid-toggle';
 import PinnedToggle from './pinned-toggle';
 
-export default function Filters() {
+type Tag = {
+  id: string;
+  created_at: string;
+  user_id: string;
+  label: string;
+  value: string;
+  tag_id: string;
+};
+
+type Tags = Tag[];
+
+
+type Goal = {
+  id: string;
+  user_id: string;
+  title: string;
+  description: string;
+  goal_id: string;
+};
+
+type Goals = Goal[];
+
+export default function Filters({goals, tags}: {goals: Goals; tags: Tags}) {
   return (
     <Card className="font-onest mb-10">
       <CardHeader>
         <CardTitle>Filters</CardTitle>
       </CardHeader>
       <CardContent className="overflow-y-scroll space-y-6">
-        <TagQuery />
+        <TagQuery tags={tags} />
         <Separator />
-        <GoalQuery />
+        <GoalQuery goals={goals} />
         <Separator />
         <div className="flex justify-between gap-4">
           <GridToggle />
