@@ -12,7 +12,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from '@/components/shadcn/ui/avatar';
-import { Button } from '../shadcn/ui/button';
+import { Button } from '../../shadcn/ui/button';
 import { Filter, MenuSquare, Plus } from 'lucide-react';
 import { createClient } from '@/utils/supabase/server';
 import { User } from '@/utils/supabase/types';
@@ -21,7 +21,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/shadcn/ui/popover';
-import AddEntryButton from './utils/add-entry';
+import AddEntryButton from '../utils/add-entry';
 
 type Tag = {
   id: string;

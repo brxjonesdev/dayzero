@@ -85,4 +85,15 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+  html,
+  body {
+    overflow: hidden; /* Hide scrollbars */
+    -ms-overflow-style: none; /* For Internet Explorer */
+    scrollbar-width: none; /* For Firefox */
+  }
+
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    display: none; /* Hide scrollbars for webkit browsers (Chrome, Safari) */
+  }
 }

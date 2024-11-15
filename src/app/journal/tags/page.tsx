@@ -26,14 +26,13 @@ import { nanoid } from 'nanoid';
 interface TagType {
   id: number;
   label: string;
-  value: string;
 }
 
 export default function TagManagement() {
   const supabase = createClient();
   const [tags, setTags] = useState<TagType[] | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
-  const [newTag, setNewTag] = useState({ label: '', value: '' });
+  const [newTag, setNewTag] = useState({ label: '' });
   const [editingTag, setEditingTag] = useState<TagType | null>(null);
 
   useEffect(() => {
@@ -58,12 +57,11 @@ export default function TagManagement() {
   }, []);
 
   const addTag = async () => {
-    if (newTag.label && newTag.value && userId) {
+    if (newTag.label && userId) {
       const { data, error } = await supabase
         .from('tags')
         .insert({
           label: newTag.label,
-          value: newTag.value,
           user_id: userId,
           tag_id: `tag_${nanoid(15)}-${nanoid(3)}`,
         })
@@ -73,7 +71,7 @@ export default function TagManagement() {
         console.error('Error adding tag:', error);
       } else if (data) {
         setTags([...(tags || []), data[0]]);
-        setNewTag({ label: '', value: '' });
+        setNewTag({ label: '' });
       }
     }
   };
@@ -82,7 +80,7 @@ export default function TagManagement() {
     if (editingTag) {
       const { error } = await supabase
         .from('tags')
-        .update({ label: editingTag.label, value: editingTag.value })
+        .update({ label: editingTag.label })
         .eq('id', editingTag.id);
 
       if (error) {
@@ -136,17 +134,6 @@ export default function TagManagement() {
                   }
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="value">Value</Label>
-                <Input
-                  id="value"
-                  placeholder="Enter tag value"
-                  value={newTag.value}
-                  onChange={(e) =>
-                    setNewTag({ ...newTag, value: e.target.value })
-                  }
-                />
-              </div>
             </form>
           </CardContent>
           <CardFooter>
@@ -179,14 +166,11 @@ export default function TagManagement() {
         ) : (
           <div className="w-full space-y-4 overflow-y-scroll flex-1">
             {tags.map((tag) => (
-              <Card key={tag.id} className="w-full">
+              <Card key={tag.id} className="w-full flex items-center justify-between">
                 <CardHeader>
                   <CardTitle>{tag.label}</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <p>Value: {tag.value}</p>
-                </CardContent>
-                <CardFooter className="flex justify-between">
+                <CardFooter className="flex justify-between p-0 gap-4 pr-4">
                   <Dialog>
                     <DialogTrigger asChild>
                       <Button
@@ -216,19 +200,6 @@ export default function TagManagement() {
                               setEditingTag({
                                 ...editingTag!,
                                 label: e.target.value,
-                              })
-                            }
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="edit-value">Value</Label>
-                          <Input
-                            id="edit-value"
-                            value={editingTag?.value || ''}
-                            onChange={(e) =>
-                              setEditingTag({
-                                ...editingTag!,
-                                value: e.target.value,
                               })
                             }
                           />

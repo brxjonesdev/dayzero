@@ -42,16 +42,16 @@ export default function LoginButton() {
   }, [supabase]);
 
   return (
-    <div>
+    <div className="w-full">
       {user ? (
         <Button
-          className="font-onest text"
-          onClick={() => router.push('/journal')}
+          className="font-onest text w-full"
+          onClick={() => router.push('/journal/home')}
         >
           Go to Journal
         </Button>
       ) : (
-        <Button className="font-onest text" onClick={handleLogin}>
+        <Button className="font-onest text w-full" onClick={handleLogin}>
           Login to DayZero
         </Button>
       )}

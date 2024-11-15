@@ -1,6 +1,5 @@
 import React from 'react';
 import LoginButton from './login-button';
-import AboutDayZero from './about-dayzero';
 
 export default function LandingHero() {
   return (
@@ -14,9 +13,8 @@ export default function LandingHero() {
           Journal your thoughts, track your mood, and set goals to build the
           life you envision—one day at a time.
         </p>
-        <div className="flex gap-4">
+        <div className="flex gap-4 w-full max-w-sm">
           <LoginButton />
-          <AboutDayZero />
         </div>
       </div>
     </section>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Plus, Pencil, Trash2, Target } from 'lucide-react';
+import { Plus, Pencil, Trash2, Target, MoreHorizontal } from 'lucide-react';
 import { Button } from '@/components/shadcn/ui/button';
 import { Input } from '@/components/shadcn/ui/input';
 import {
@@ -22,6 +22,12 @@ import {
 import { Label } from '@/components/shadcn/ui/label';
 import { createClient } from '@/utils/supabase/client';
 import { nanoid } from 'nanoid';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/shadcn/ui/dropdown-menu'
 
 interface Goal {
   title: string;
@@ -31,7 +37,7 @@ interface Goal {
 
 export default function Goals() {
   const supabase = createClient();
-  const [goals, setGoals] = useState<Goal[] | null>(null); // Initialized as empty array
+  const [goals, setGoals] = useState<Goal[] | null>(null);
   const [userID, setUserID] = useState<string | null>(null);
   const [newGoal, setNewGoal] = useState({
     title: '',
@@ -39,6 +45,7 @@ export default function Goals() {
     goal_id: '',
   });
   const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
     const fetchGoals = async () => {
@@ -70,7 +77,6 @@ export default function Goals() {
         user_id: userID,
         goal_id: goal_id,
       });
-      //  Setting State regardless of success or failure
       setGoals([
         ...(goals || []),
         {
@@ -98,8 +104,12 @@ export default function Goals() {
           .from('goals')
           .update(editingGoal)
           .eq('goal_id', editingGoal.goal_id);
+        if (error) {
+          console.error('Error updating goal:', error);
+        }
       }
       setEditingGoal(null);
+      setIsDialogOpen(false);
     }
   };
 
@@ -110,6 +120,9 @@ export default function Goals() {
         .from('goals')
         .delete()
         .eq('goal_id', goal_id);
+      if (error) {
+        console.error('Error deleting goal:', error);
+      }
     }
   };
 
@@ -178,94 +191,95 @@ export default function Goals() {
           <Card className="col-span-full w-8/12">
             <CardContent className="flex flex-col items-center justify-center py-12 h-full">
               <Target className="h-12 w-12 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold mb-2">
-                {goals === null ? 'Loading...' : 'No goals yet'}
-              </h3>
+              <h3 className="text-lg font-semibold mb-2">No goals yet</h3>
               <p className="text-muted-foreground text-center">
-                {goals === null
-                  ? 'Please wait while we fetch your goals.'
-                  : 'Start by adding a new goal to track your progress.'}
+                Start by adding a new goal to track your progress.
               </p>
             </CardContent>
           </Card>
         ) : (
-          <div className="w-full space-y-4 overflow-y-scroll flex-1">
+          <div className="w-full overflow-y-scroll flex-1 grid grid-cols-2 gap-4 p-4">
             {goals &&
               goals.map((goal) => (
-                <Card key={goal.id} className="w-full">
-                  <CardHeader>
-                    <CardTitle>{goal.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p>{goal.description}</p>
-                  </CardContent>
-                  <CardFooter className="flex justify-between">
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button
-                          variant="outline"
-                          onClick={() => setEditingGoal(goal)}
-                        >
-                          <Pencil className="mr-2 h-4 w-4" /> Edit
+                <Card
+                  key={goal.goal_id}
+                  className="w-full h-fit bg-gradient-to-t from-cyan-200 to-cyan-500 dark:from-fuchsia-600 dark:to-pink-600 text-white rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:shadow-2xl hover:cursor-pointer dark:text-black"
+                >
+                  <CardHeader className="pb-2 flex flex-row items-center justify-between gap-4">
+                    <CardTitle className="text-xl font-semibold">{goal.title}</CardTitle>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <span className="sr-only">Open menu</span>
+                          <MoreHorizontal className="h-4 w-4" />
                         </Button>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>Edit Goal</DialogTitle>
-                        </DialogHeader>
-                        <form
-                          onSubmit={(e) => {
-                            e.preventDefault();
-                            updateGoal();
-                          }}
-                          className="space-y-4"
-                        >
-                          <div className="space-y-2">
-                            <Label htmlFor="edit-title">Title</Label>
-                            <Input
-                              id="edit-title"
-                              value={editingGoal?.title || ''}
-                              onChange={(e) =>
-                                setEditingGoal({
-                                  ...editingGoal,
-                                  title: e.target.value,
-                                } as Goal)
-                              }
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="edit-description">
-                              Description
-                            </Label>
-                            <Input
-                              id="edit-description"
-                              value={editingGoal?.description || ''}
-                              onChange={(e) =>
-                                setEditingGoal({
-                                  ...editingGoal,
-                                  description: e.target.value,
-                                } as Goal)
-                              }
-                            />
-                          </div>
-                        </form>
-                        <DialogFooter>
-                          <Button onClick={updateGoal}>Save Changes</Button>
-                        </DialogFooter>
-                      </DialogContent>
-                    </Dialog>
-                    <Button
-                      variant="destructive"
-                      onClick={() => deleteGoal(goal.goal_id)}
-                    >
-                      <Trash2 className="mr-2 h-4 w-4" /> Delete
-                    </Button>
-                  </CardFooter>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onSelect={() => {
+                          setEditingGoal(goal);
+                          setIsDialogOpen(true);
+                        }}>
+                          <Pencil className="mr-2 h-4 w-4" /> Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onSelect={() => deleteGoal(goal.goal_id)} className="text-red-600">
+                          <Trash2 className="mr-2 h-4 w-4" /> Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    <p className="text-sm">{goal.description || "No description"}</p>
+                  </CardContent>
+                  
                 </Card>
               ))}
           </div>
         )}
       </div>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className='max-w-lg'>
+          <DialogHeader>
+            <DialogTitle>Edit Goal</DialogTitle>
+          </DialogHeader>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              updateGoal();
+            }}
+            className="space-y-4"
+          >
+            <div className="space-y-2">
+              <Label htmlFor="edit-title">Title</Label>
+              <Input
+                id="edit-title"
+                value={editingGoal?.title || ''}
+                onChange={(e) =>
+                  setEditingGoal({
+                    ...editingGoal,
+                    title: e.target.value,
+                  } as Goal)
+                }
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-description">Description</Label>
+              <Input
+                id="edit-description"
+                value={editingGoal?.description || ''}
+                onChange={(e) =>
+                  setEditingGoal({
+                    ...editingGoal,
+                    description: e.target.value,
+                  } as Goal)
+                }
+              />
+            </div>
+          </form>
+          <DialogFooter>
+            <Button onClick={updateGoal}>Save Changes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }

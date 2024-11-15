@@ -4,7 +4,7 @@ import { Badge } from '../shadcn/ui/badge';
 export default function LandingFeatures() {
   return (
     <section className="py-4">
-      <div className="grid rounded-3xl  p-8 grid-cols-1 gap-8 items-center lg:grid-cols-2 font-onest border-cyan-300 dark:border-fuchsia-600 border-2">
+      <div className="grid rounded-3xl  grid-cols-1 gap-8 items-center lg:grid-cols-2 font-onest ">
         <div className="bg-muted rounded-md aspect-video block lg:hidden"></div>
         <div className="flex gap-10 flex-col">
           <div className="flex gap-4 flex-col">

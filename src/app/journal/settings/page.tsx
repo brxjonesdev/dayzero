@@ -1,5 +1,6 @@
 'use client';
 
+import { Button } from '@/components/shadcn/ui/button';
 import {
   Card,
   CardHeader,
@@ -11,6 +12,16 @@ import { Label } from '@/components/shadcn/ui/label';
 import { Separator } from '@/components/shadcn/ui/separator';
 
 export default function Settings() {
+  const handleLogout = () => {
+    // Logic for logging out (e.g., clearing session, redirecting, etc.)
+    console.log("User logged out");
+  };
+
+  const handleDeleteAccount = () => {
+    // Logic for deleting the account (e.g., making a delete API call, confirmation prompt, etc.)
+    console.log("Account deleted");
+  };
+
   return (
     <main className="flex-1 flex flex-row font-onest p-6 overflow-y-scroll w-full">
       <div className="w-5/12 flex justify-end pr-12">
@@ -23,16 +34,20 @@ export default function Settings() {
             <CardTitle>Settings</CardTitle>
           </CardHeader>
           <CardContent>
-            <form className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="label">Label</Label>
-                <Input id="label" placeholder="Enter tag label" />
+          <div className="space-x-2 flex">
+                <Button
+                  onClick={handleLogout}
+                  className="w-full py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                >
+                  Log Out
+                </Button>
+                <Button
+                  onClick={handleDeleteAccount}
+                  className="w-full py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+                >
+                  Delete Account
+                </Button>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="value">Value</Label>
-                <Input id="value" placeholder="Enter tag value" />
-              </div>
-            </form>
           </CardContent>
         </Card>
       </div>

@@ -1,7 +1,6 @@
-import AppInfo from '@/components/journal/app-info';
-import JournalEntries from '@/components/journal/entries/journal-entries';
-import Filters from '@/components/journal/filters/filters';
-import UserDetails from '@/components/journal/user-details';
+import Journal from '@/components/journal/home/entries/journal-entries';
+import Filters from '@/components/journal/home/filters/filters';
+import UserDetails from '@/components/journal/home/user-details';
 import { createClient } from '@/utils/supabase/server';
 import React from 'react';
 export default async function AppHome() {
@@ -35,14 +34,14 @@ export default async function AppHome() {
   }
 
   return (
-    <main className="flex-1 flex flex-col">
-      <div className="flex overflow-y-scroll  flex-1 gap-4 flex-col lg:flex-row">
+    <main className="flex-1 flex flex-col overflow-y-scroll ">
+      <div className="flex  flex-1 gap-4 flex-col lg:flex-row overflow-y-scroll">
         <section className="w-full md:w-3/12 space-y-4 ">
-          <UserDetails goals={goals} tags={tags} />
-          <Filters goals={goals} tags={tags} />
+          {goals && tags && <UserDetails goals={goals} tags={tags} />}
+          {goals && tags && <Filters goals={goals} tags={tags} />}
         </section>
-        <section className="w-full md:w-9/12 bg-black/20 h-full ">
-          <JournalEntries entries={entries} />
+        <section className="w-full md:w-9/12 flex-1 space-y-4 overflow-y-scroll">
+          <Journal userID={user?.id} />
         </section>
       </div>
     </main>

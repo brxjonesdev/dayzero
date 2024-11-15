@@ -2,16 +2,13 @@ import React from 'react';
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/shadcn/ui/card';
 import TagQuery from './tag-query';
 import GoalQuery from './goal-query';
 import { Separator } from '@/components/shadcn/ui/separator';
-import GridToggle from './grid-toggle';
-import PinnedToggle from './pinned-toggle';
+import MoodQuery from './mood-query';
 
 type Tag = {
   id: string;
@@ -24,7 +21,6 @@ type Tag = {
 
 type Tags = Tag[];
 
-
 type Goal = {
   id: string;
   user_id: string;
@@ -35,7 +31,7 @@ type Goal = {
 
 type Goals = Goal[];
 
-export default function Filters({goals, tags}: {goals: Goals; tags: Tags}) {
+export default function Filters({ goals, tags }: { goals: Goals; tags: Tags }) {
   return (
     <Card className="font-onest mb-10">
       <CardHeader>
@@ -46,10 +42,7 @@ export default function Filters({goals, tags}: {goals: Goals; tags: Tags}) {
         <Separator />
         <GoalQuery goals={goals} />
         <Separator />
-        <div className="flex justify-between gap-4">
-          <GridToggle />
-          <PinnedToggle />
-        </div>
+        <MoodQuery/>
       </CardContent>
     </Card>
   );
