@@ -2,13 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/shadcn/ui/button';
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/shadcn/ui/card';
+import { Card, CardContent, CardFooter } from '@/components/shadcn/ui/card';
 import { Input } from '@/components/shadcn/ui/input';
 import { Label } from '@/components/shadcn/ui/label';
 import { Textarea } from '@/components/shadcn/ui/textarea';
@@ -25,7 +19,6 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -37,36 +30,16 @@ import {
 } from '@/components/shadcn/ui/toggle-group';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
-
-type Tag = {
-  id: string;
-  created_at: string;
-  user_id: string;
-  label: string;
-  value: string;
-  tag_id: string;
-};
-
-type Tags = Tag[];
-
-type Goal = {
-  id: string;
-  user_id: string;
-  title: string;
-  description: string;
-  goal_id: string;
-};
-
-type Goals = Goal[];
+import { Entry, Goal, Tag } from '@/utils/types';
 
 export default function JournalEntryForm({
   goals,
   tags,
   user_id,
 }: {
-  goals: Goals;
-  tags: Tags;
-  user_id: string;
+  goals: Goal[];
+  tags: Tag[];
+  user_id: string | undefined;
 }) {
   const supabase = createClient();
   const Router = useRouter();
@@ -76,18 +49,15 @@ export default function JournalEntryForm({
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [newGoal, setNewGoal] = useState('');
   const [newTag, setNewTag] = useState('');
-  const [currentGoals, setGoals] = useState<Goals>(goals);
-  const [currentTags, setTags] = useState<Tags>(tags);
+  const [currentGoals, setGoals] = useState<Goal[]>(goals);
+  const [currentTags, setTags] = useState<Tag[]>(tags);
   const [selectedMood, setSelectedMood] = useState('neutral');
 
   const handleAddGoal = () => {
-    {
-      /* What this function is doing.
-       */
-    }
     if (newGoal && !currentGoals.some((goal) => goal.title === newGoal)) {
       const newGoalObj = {
-        id: `${Date.now()}`,
+        id: Date.now(),
+        created_at: new Date().toISOString(),
         user_id,
         title: newGoal,
         description: '',
@@ -127,74 +97,180 @@ export default function JournalEntryForm({
     setSelectedTags(selectedTags.filter((t) => t !== tagLabel));
   };
 
+  const addGoalIfNeeded = async (
+    goal_id: string,
+    currentGoals: Goal[],
+    goals: Goal[]
+  ) => {
+    const goalExists = goals.some((goal) => goal.goal_id === goal_id);
+
+    if (goal_id && !goalExists) {
+      const newGoal = currentGoals.find((goal) => goal.goal_id === goal_id);
+      if (newGoal) {
+        return supabase
+          .from('goals')
+          .insert([{ ...newGoal, created_at: new Date().toISOString() }]);
+      }
+    }
+
+    return null; // No new goal needed
+  };
+
+  const addNewTags = async (
+    selectedTags: string[],
+    currentTags: Tag[],
+    tags: Tag[]
+  ) => {
+    const newTags = currentTags.filter(
+      (tag) =>
+        tag.label &&
+        selectedTags.includes(tag.label) &&
+        !tags.some((existingTag) => existingTag.tag_id === tag.tag_id)
+    );
+
+    const tagInsertPromises = newTags.map((tag) => {
+      return supabase
+        .from('tags')
+        .insert([
+          {
+            tag_id: tag.tag_id, // Ensure that you're inserting the correct tag_id
+            label: tag.label,
+            user_id: tag.user_id,
+            created_at: new Date().toISOString(),
+          },
+        ])
+        .then(() => {}); // Convert to Promise<void>
+    });
+
+    return tagInsertPromises;
+  };
+
+  const insertEntryAndAssociateTags = async (
+    entry: Entry,
+    tagIds: string[]
+  ) => {
+    const { data: entryData, error: entryError } = await supabase
+      .from('entries')
+      .insert({
+        content: entry.content,
+        user_id: entry.user_id,
+        goal_id: entry.goal_id || null,
+        mood: entry.mood,
+        date: entry.date,
+        created_at: new Date().toISOString(),
+      })
+      .select('id'); // Return the new entry's ID for tag association
+
+    if (entryError) {
+      console.error('Error adding entry:', entryError);
+      return null;
+    }
+
+    if (entryData && entryData[0] && tagIds.length > 0) {
+      const entryTagsInsert = tagIds.map((tag_id) => ({
+        entry_id: entryData[0].id, // Use the returned entry ID
+        tag_id, // Use tag_id for association
+      }));
+
+      const { error: tagAssociationError } = await supabase
+        .from('entry_tags')
+        .insert(entryTagsInsert);
+
+      if (tagAssociationError) {
+        console.error(
+          'Error associating tags with entry:',
+          tagAssociationError
+        );
+      } else {
+        console.log('Tags associated with entry successfully.');
+      }
+    }
+
+    return entryData;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Prepare the entry object
+    // Map selected tag labels to tag objects
     const selectedTagsObj = currentTags.filter((tag) =>
-      selectedTags.includes(tag.label)
+      selectedTags.includes(tag.label ?? '')
     );
-    const entry = {
+
+    // Prepare the new entry object
+    const entry: Entry = {
+      id: Date.now(),
+      created_at: new Date().toISOString(),
       date: new Date().toISOString(),
       content,
       mood: selectedMood,
-      goal: selectedGoal,
-      tags: selectedTagsObj,
+      goal_id: selectedGoal, // Use goal_id for association
       user_id,
-      pinned: false,
     };
 
     console.log('entry:', entry);
 
-    // Prepare promises for adding new goal and new tags
-    const promises: Promise<any>[] = [];
-
-    // Check if the goal needs to be added
-    if (entry.goal && !goals.some((goal) => goal.goal_id === entry.goal)) {
-      const newGoal = currentGoals.find((goal) => goal.goal_id === entry.goal);
-      if (newGoal) {
-        const addGoalPromise = supabase.from('goals').insert([newGoal]);
-        promises.push(addGoalPromise);
-      }
-    }
-
-    // Check if new tags need to be added
-    const newTagObj = currentTags.filter((tag) =>
-      selectedTags
-        .filter((tag) => !tags.some((t) => t.label === tag))
-        .includes(tag.label)
-    );
-    if (newTagObj.length > 0) {
-      const addTagPromises = newTagObj.map((tag) =>
-        supabase.from('tags').insert([tag])
-      );
-      promises.push(...addTagPromises);
-    }
+    // Start a list of promises
+    const promises: Promise<void>[] = [];
 
     try {
-      // Run all promises in parallel
-      await Promise.all(promises);
-
-      // Add the new entry to the database after goals and tags are added
-      const { data, error } = await supabase.from('entries').insert({
-        content: entry.content,
-        user_id: entry.user_id,
-        goal: entry.goal,
-        // just tag ids
-        tags: entry.tags.map((tag) => tag.tag_id),
-        mood: entry.mood,
-        date: entry.date,
-        isPinned: entry.pinned,
-      });
-      // close the dialog
-      Router.refresh()
-      if (error) {
-        console.error('Error adding entry:', error);
-      } else {
-        console.log('Entry added successfully:', data);
+      // Step 1: Add goal if needed
+      if (entry.goal_id) {
+        await addGoalIfNeeded(entry.goal_id, currentGoals, goals);
       }
+
+      // Step 2: Add new tags
+      const tagInsertPromises = await addNewTags(
+        selectedTags,
+        currentTags,
+        tags
+      );
+      promises.push(...(tagInsertPromises as Promise<void>[]));
+
+      // Run all promises to add goals and tags
+      const results = await Promise.allSettled(promises);
+
+      // Handle any rejected promises
+      const failedPromises = results.filter(
+        (result) => result.status === 'rejected'
+      );
+      if (failedPromises.length > 0) {
+        console.error('Some goals or tags failed to insert:', failedPromises);
+        return; // Stop if goals/tags were not inserted
+      }
+
+      // Step 3: Re-fetch tags to get the correct tag_id values
+      const { data: updatedTags, error: tagError } = await supabase
+        .from('tags')
+        .select('tag_id') // Ensure this aligns with the schema (tag_id)
+        .in(
+          'tag_id',
+          selectedTagsObj.map((tag) => tag.tag_id)
+        );
+
+      if (tagError) {
+        console.error('Error fetching updated tags:', tagError);
+        return;
+      }
+
+      // Get the tag_ids
+      const tagIds = updatedTags.map((tag) => tag.tag_id);
+
+      // Step 4: Insert the entry and associate tags
+      const entryData = await insertEntryAndAssociateTags(entry, tagIds);
+
+      if (!entryData) {
+        console.error('Error adding entry or associating tags.');
+        return;
+      }
+
+      console.log('Entry added successfully:', entryData);
+
+      // Refresh the view or perform any necessary actions after success
+      Router.refresh();
+      handleClose();
     } catch (error) {
-      console.error('Error adding goals or tags:', error);
+      console.error('Error adding goals, tags, or entry:', error);
     }
   };
 
@@ -369,14 +445,16 @@ export default function JournalEntryForm({
                     <div className="flex flex-wrap gap-2">
                       {currentTags.map((tag) => (
                         <Badge
-                          key={tag.id}
+                          key={tag.tag_id}
                           variant={
-                            selectedTags.includes(tag.label)
+                            selectedTags.includes(tag.label ?? '')
                               ? 'default'
                               : 'outline'
                           }
                           className="cursor-pointer"
-                          onClick={() => handleTagSelect(tag.label)}
+                          onClick={() =>
+                            tag.label && handleTagSelect(tag.label)
+                          }
                         >
                           {tag.label}
                         </Badge>

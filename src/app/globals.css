@@ -87,7 +87,6 @@ body {
   }
   html,
   body {
-    overflow: hidden; /* Hide scrollbars */
     -ms-overflow-style: none; /* For Internet Explorer */
     scrollbar-width: none; /* For Firefox */
   }

@@ -11,7 +11,6 @@ export default async function JournalHeader() {
         <h1 className="text-3xl font-bold font-unbounded dark:text-white">
           DayZero
         </h1>
-        <Navbar />
       </div>
 
       <div className="flex gap-4 items-center">

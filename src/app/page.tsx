@@ -7,7 +7,7 @@ import ShamelessPlug from '@/components/landing/shameless-plug';
 
 export default function Home() {
   return (
-    <main className="max-w-[96rem] mx-auto px-4 space-y-10">
+    <main className="max-w-6xl mx-auto px-4 space-y-10 ">
       <LandingHeader />
       <LandingHero />
       <LandingFeatures />

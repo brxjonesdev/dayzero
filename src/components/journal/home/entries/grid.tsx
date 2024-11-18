@@ -11,11 +11,7 @@ import {
 } from 'date-fns';
 import { Button } from '@/components/shadcn/ui/button';
 import { useRouter, useSearchParams } from 'next/navigation';
-
-type Entry = {
-  date: string;
-  mood: string;
-};
+import { Entry } from '@/utils/types';
 
 export default function MoodGrid({ entries }: { entries: Entry[] }) {
   const [year, setYear] = useState(new Date().getFullYear());
@@ -46,7 +42,7 @@ export default function MoodGrid({ entries }: { entries: Entry[] }) {
   };
 
   return (
-    <div className="flex-1  hidden lg:block font-onest">
+    <div className="flex-1  hidden xl:block font-onest">
       <div className="p-4">
         <div className="flex justify-between items-center mb-4 gap-8">
           <h2 className="text-xl md:text-2xl font-bold">{year}</h2>
