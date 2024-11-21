@@ -1,8 +1,6 @@
 import React from 'react';
-import MiniUserData from '../layout/mini-user';
 import { ModeToggle } from '../shadcn/ui/mode-toggle';
-import Navbar from './navbar';
-import { createClient } from '@/utils/supabase/server';
+import Settings from './utils/settings';
 
 export default async function JournalHeader() {
   return (
@@ -14,6 +12,7 @@ export default async function JournalHeader() {
       </div>
 
       <div className="flex gap-4 items-center">
+        <Settings/>
         <ModeToggle />
       </div>
     </header>

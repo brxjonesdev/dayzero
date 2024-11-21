@@ -1,11 +1,17 @@
+/* eslint-disable @next/next/no-img-element */
 import { Check } from 'lucide-react';
 import { Badge } from '../shadcn/ui/badge';
+import showcase from '@/public/DayZero.png'
 
 export default function LandingFeatures() {
   return (
     <section className="py-4">
       <div className="grid rounded-3xl  grid-cols-1 gap-8 items-center lg:grid-cols-2 font-onest ">
-        <div className="bg-muted rounded-md aspect-video block lg:hidden"></div>
+        <img 
+        src={showcase.src}
+        className="bg-muted rounded-md aspect-video block lg:hidden"
+        alt='DayZero Image' 
+        />
         <div className="flex gap-10 flex-col">
           <div className="flex gap-4 flex-col">
             <div>
@@ -62,7 +68,11 @@ export default function LandingFeatures() {
             </div>
           </div>
         </div>
-        <div className="bg-muted rounded-md aspect-video hidden lg:block"></div>
+        <img 
+        src={showcase.src}
+        className="bg-muted rounded-md aspect-video hidden lg:block"
+        alt='DayZero Image' 
+        />
       </div>
     </section>
   );

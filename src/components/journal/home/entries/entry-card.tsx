@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { format } from 'date-fns';
 import { EllipsisVertical, Pencil, Trash2 } from 'lucide-react';
-import Link from 'next/link';
+import { createClient } from '@/utils/supabase/client';
 
 import { Card, CardContent, CardHeader } from '@/components/shadcn/ui/card';
 import {
@@ -38,6 +38,7 @@ import {
   ToggleGroupItem,
 } from '@/components/shadcn/ui/toggle-group';
 import { Entry, Goal, Tag } from '@/utils/types';
+import { useRouter } from 'next/navigation';
 
 export default function EntryCard({
   entry,
@@ -48,13 +49,18 @@ export default function EntryCard({
   tags: Tag[];
   goals: Goal[];
 }) {
+  const router = useRouter();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [editedEntry, setEditedEntry] = useState({ ...entry });
   const [selectedGoal, setSelectedGoal] = useState(entry.goal?.goal_id || '');
   const [selectedTags, setSelectedTags] = useState(
-    entry.tags?.map((t: { tag: Tag }) => t.tag.tag_id) || []
+    entry.tags?.map((t: Tag) => t.tag?.tag_id ?? '') || []
   );
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const supabase = createClient();
 
   const moodColors = {
     ecstatic: 'bg-yellow-300 hover:bg-yellow-400',
@@ -71,30 +77,92 @@ export default function EntryCard({
     exhausted: 'bg-rose-300 hover:bg-rose-400',
   };
 
-  const handleEdit = () => {
-    // onEdit({
-    //   ...editedEntry,
-    //   goal: goals.find(g => g.goal_id === selectedGoal),
-    //   tags: selectedTags.map(tagId => ({ tag: tags.find(t => t.tag_id === tagId) }))
-    // })
-    setIsEditModalOpen(false);
+  const handleEdit = async () => {
+    setIsLoading(true);
+    setError(null);
+  
+    try {
+      // Updating the main fields for the entry
+      const {error: updateError } = await supabase
+        .from("entries")
+        .update({
+          content: editedEntry.content,
+          mood: editedEntry.mood,
+          goal_id: selectedGoal,
+        })
+        .eq("id", entry.id);
+  
+      if (updateError) throw updateError;
+  
+      // Handle Tags
+      const newTags = selectedTags; // Array of tag IDs the user selected
+      const currentTags = entry?.tags?.map((tag) => tag.tag?.tag_id).filter((tag): tag is string => !!tag) ?? [];
+  
+      // Tags to add
+      const tagsToAdd = newTags.filter((tag) => !currentTags.includes(tag));
+  
+      // Tags to remove
+      const tagsToRemove = currentTags.filter((tag) => tag && !newTags.includes(tag));
+  
+      // Add new tags
+      if (tagsToAdd.length > 0) {
+        const { error: addError } = await supabase
+          .from("entry_tags")
+          .insert(
+            tagsToAdd.map((tag_id) => ({
+              entry_id: entry.id,
+              tag_id,
+            }))
+          );
+  
+        if (addError) throw addError;
+      }
+  
+      // Remove old tags
+      if (tagsToRemove.length > 0) {
+        const { error: removeError } = await supabase
+          .from("entry_tags")
+          .delete()
+          .eq("entry_id", entry.id)
+          .in("tag_id", tagsToRemove);
+  
+        if (removeError) throw removeError;
+      }
+  
+      console.log("Entry updated successfully!");
+    } catch (error) {
+      console.error("Error updating entry:", error);
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('An unknown error occurred');
+      }
+    } finally {
+      setIsLoading(false); 
+      router.refresh();
+      setIsEditModalOpen(false);
+    }
   };
+  
 
-  const handleDelete = () => {
-    // onDelete(entry.goal.goal_id)
-    setIsDeleteModalOpen(false);
-  };
+  const handleDelete = async () => {
+    try {
+      const { error } = await supabase
+        .from('entries')
+        .delete()
+        .eq('id', entry.id);
 
-  const handleGoalSelection = (value: string) => {
-    setSelectedGoal(value);
-  };
-
-  const handleTagSelection = (value: string[]) => {
-    setSelectedTags(value);
+      if (error) throw error;
+      router.refresh();
+      setIsDeleteModalOpen(false);
+    } catch (error) {
+      console.error('Error deleting entry:', error);
+      setError('Failed to delete entry. Please try again.');
+    }
   };
 
   return (
-    <Card className="mb-4 w-full pr-2">
+    <Card className="mb-4 w-full">
       <CardHeader className="pb-0 font-onest">
         <div className="text-xs border-b pb-2 flex justify-between items-center">
           <div className="flex flex-col">
@@ -143,15 +211,18 @@ export default function EntryCard({
           <div className="flex flex-wrap gap-2 items-center">
             <p className="text-sm font-semibold">Tags:</p>
 
-            {entry.tags?.map((t: any) => (
+            {entry.tags?.map((t: Tag) => (
               <Badge
-                key={t.tag.tag_id}
+                key={t.tag?.tag_id}
                 variant="outline"
                 className="bg-cyan-500 dark:bg-fuchsia-500 text-black"
               >
-                {t.tag.label}
+                {t.tag?.label}
               </Badge>
             ))}
+            {entry.tags?.length === 0 && (
+              <p className="text-sm text-muted-foreground">No tags</p>
+            )}
           </div>
         </div>
       </CardContent>
@@ -162,87 +233,86 @@ export default function EntryCard({
           <DialogHeader>
             <DialogTitle>Edit Entry</DialogTitle>
             <DialogDescription>
-              Make changes to your entry here. Click save when you're done.
+              Make changes to your entry here. Click save when you&apos;re done.
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="content" className="text-right">
-                Content
-              </Label>
-              <Textarea
-                id="content"
-                value={editedEntry.content}
-                onChange={(e) =>
-                  setEditedEntry({ ...editedEntry, content: e.target.value })
-                }
-                className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="mood" className="text-right">
-                Mood
-              </Label>
-              <Select
-                value={editedEntry.mood}
-                onValueChange={(value) =>
-                  setEditedEntry({ ...editedEntry, mood: value })
-                }
-              >
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Select a mood" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.keys(moodColors).map((mood) => (
-                    <SelectItem key={mood} value={mood}>
-                      {mood}
-                    </SelectItem>
+          <form onSubmit={(e) => { e.preventDefault(); handleEdit(); }}>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="content" className="text-right">
+                  Content
+                </Label>
+                <Textarea
+                  id="content"
+                  value={editedEntry.content || ''}
+                  onChange={(e) =>
+                    setEditedEntry({ ...editedEntry, content: e.target.value })
+                  }
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="mood" className="text-right">
+                  Mood
+                </Label>
+                <Select
+                  value={editedEntry.mood || undefined}
+                  onValueChange={(value) =>
+                    setEditedEntry({ ...editedEntry, mood: value })
+                  }
+                >
+                  <SelectTrigger className="col-span-3">
+                    <SelectValue placeholder="Select a mood" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.keys(moodColors).map((mood) => (
+                      <SelectItem key={mood} value={mood}>
+                        {mood}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="goal" className="text-right">
+                  Goal
+                </Label>
+                <Select value={selectedGoal} onValueChange={setSelectedGoal}>
+                  <SelectTrigger className="col-span-3">
+                    <SelectValue placeholder="Select A Goal" />
+                  </SelectTrigger>
+                  <SelectContent className="font-onest">
+                    {goals.map((goal) => (
+                      <SelectItem key={goal.goal_id} value={goal.goal_id}>
+                        {goal.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label className="text-right">Tags</Label>
+                <ToggleGroup
+                  className="col-span-3 flex flex-wrap gap-2"
+                  type="multiple"
+                  value={selectedTags}
+                  onValueChange={setSelectedTags}
+                >
+                  {tags.map((tag) => (
+                    <ToggleGroupItem key={tag.tag_id} value={tag.tag_id} asChild>
+                      <Badge variant="outline">{tag.label}</Badge>
+                    </ToggleGroupItem>
                   ))}
-                </SelectContent>
-              </Select>
+                </ToggleGroup>
+              </div>
             </div>
-            <Label>Select a Goal</Label>
-            <Select value={selectedGoal} onValueChange={handleGoalSelection}>
-              <SelectTrigger className="w-full justify-self-center">
-                <SelectValue placeholder="Select A Goal" />
-              </SelectTrigger>
-              <SelectContent className="font-onest">
-                {goals.map((goal) => (
-                  <SelectItem key={goal.goal_id} value={goal.goal_id}>
-                    {goal.title}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <div className="flex justify-between items-center w-full">
-              <Label>Search By Tags</Label>
-            </div>
-
-            <ToggleGroup
-              className="w-full rounded-xl flex-wrap bg-black/5 py-2 justify-center max-h-64 overflow-y-scroll"
-              type="multiple"
-              value={selectedTags}
-              onValueChange={handleTagSelection}
-            >
-              {tags.map((tag) => (
-                <ToggleGroupItem key={tag.tag_id} value={tag.tag_id}>
-                  <Badge className="bg-cyan-500 dark:bg-fuchsia-500">
-                    {tag.label}
-                  </Badge>
-                </ToggleGroupItem>
-              ))}
-              {!tags.length && (
-                <Link className="text-xs mx-auto" href="/journal/tags">
-                  Add Tags
-                </Link>
-              )}
-            </ToggleGroup>
-          </div>
-          <DialogFooter>
-            <Button type="submit" onClick={handleEdit}>
-              Save changes
-            </Button>
-          </DialogFooter>
+            <DialogFooter>
+              {error && <p className="text-red-500 text-sm">{error}</p>}
+              <Button type="submit" disabled={isLoading}>
+                {isLoading ? 'Saving...' : 'Save changes'}
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
 

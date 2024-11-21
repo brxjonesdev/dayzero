@@ -30,4 +30,10 @@ export type Tag = {
   created_at: string; // ISO string for "timestamp with time zone"
   label?: string | null; // Nullable text
   user_id?: string | null; // Nullable text
+  tag?: {
+    tag_id: string;
+    created_at: string; // ISO string for "timestamp with time zone"
+    label?: string | null; // Nullable text
+    user_id?: string | null; // Nullable text
+  }
 };

@@ -44,6 +44,7 @@ export default async function UserDetails({
           </CardTitle>
           <CardDescription>What will you accomplish today?</CardDescription>
         </div>
+        
       </CardHeader>
       <CardFooter className="gap-4 flex-col lg:flex-row ">
         <AddEntryButton user_id={user?.id} tags={tags} goals={goals} />
