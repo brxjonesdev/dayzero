@@ -7,7 +7,22 @@ import { Badge } from '@/components/shadcn/ui/badge';
 export default function MoodQuery() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const moodColors = {
+
+  type Mood =
+    | 'ecstatic'
+    | 'happy'
+    | 'content'
+    | 'hopeful'
+    | 'neutral'
+    | 'anxious'
+    | 'frustrated'
+    | 'sad'
+    | 'lonely'
+    | 'angry'
+    | 'overwhelmed'
+    | 'exhausted';
+
+  const moodColors: Record<Mood, string> = {
     ecstatic: 'bg-yellow-300 hover:bg-yellow-400',
     happy: 'bg-green-300 hover:bg-green-400',
     content: 'bg-blue-300 hover:bg-blue-400',
@@ -26,7 +41,7 @@ export default function MoodQuery() {
     <section className="space-y-2">
       <Label>Select a Mood</Label>
       <div className="grid grid-cols-3 gap-2">
-        {Object.keys(moodColors).map((mood) => (
+        {(Object.keys(moodColors) as Mood[]).map((mood) => (
           <Badge
             key={mood}
             className={`${moodColors[mood]} py-1 items-center justify-center text-center`}
