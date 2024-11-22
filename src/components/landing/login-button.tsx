@@ -15,7 +15,7 @@ export default function LoginButton() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `http://localhost:3000/auth/callback`,
+        redirectTo: `https://dayzero-ttsl.netlify.app/auth/callback`,
         queryParams: {
           access_type: 'offline',
           prompt: 'consent',
