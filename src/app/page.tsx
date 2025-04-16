@@ -8,11 +8,11 @@ import ShamelessPlug from '@/shared/components/landing/shameless-plug';
 export default function Home() {
   return (
     <main className="max-w-6xl mx-auto px-4 space-y-10  ">
-      {/* <LandingHeader />
+      <LandingHeader />
       <LandingHero />
       <LandingFeatures />
       <Benefits />
-      <ShamelessPlug /> */}
+      <ShamelessPlug />
     </main>
   );
 }

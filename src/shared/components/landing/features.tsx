@@ -46,8 +46,8 @@ export default function LandingFeatures() {
             <div className="flex flex-row gap-4 items-start">
               <Check className="w-4 h-4 mt-1 text-primary" />
               <div className="flex flex-col gap-1">
-                <p className="text-cyan-500 dark:text-purple-300 font-medium">Privacy-Focused</p>
-                <p className="text-muted-foreground text-sm">Your thoughts remain private and secure.</p>
+              <p className="text-cyan-500 dark:text-purple-300 font-medium">Daily Repeition</p>
+              <p className="text-muted-foreground text-sm">Build consistency with small, mindful actions every day.</p>
               </div>
             </div>
           </div>
