@@ -12,21 +12,28 @@ export default function LoginButton() {
   const [user, setUser] = useState<User | null>(null)
 
   const handleLogin = async () => {
+    const isDev = process.env.NODE_ENV === "development"
+    const redirectTo = isDev
+      ? "http://localhost:3000/auth/callback"
+      : "https://dayzero-ttsl.netlify.app/auth/callback"
+  
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `https://dayzero-ttsl.netlify.app/auth/callback`,
+        redirectTo,
         queryParams: {
           access_type: "offline",
           prompt: "consent",
         },
       },
     })
-
+  
     if (error) {
       console.error("Error logging in:", error.message)
     }
   }
+  
+  
 
   useEffect(() => {
     const fetchData = async () => {

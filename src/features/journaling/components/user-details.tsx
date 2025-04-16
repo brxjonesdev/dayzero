@@ -15,7 +15,7 @@ import AddEntryButton from '@/features/journaling/components/add-entry-dialog';
 import MobileFilters from '@/shared/components/journal/home/filters/mobile-filter';
 import { Goal, Tag } from '@/utils/types';
 
-export default async function UserDetails({
+export default function UserDetails({
   goals,
   tags,
 }: {

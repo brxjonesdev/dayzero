@@ -1,6 +1,6 @@
 import { ModeToggle } from "../shadcn/ui/mode-toggle"
 
-export default async function LandingHeader() {
+export default function LandingHeader() {
   return (
     <header className="py-4 flex flex-col">
       <div className="justify-between flex w-full">

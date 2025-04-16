@@ -1,20 +1,19 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { Raleway, Open_Sans } from "next/font/google"
-import { ThemeProvider } from '@/shared/components/shadcn/ui/theme-provider';
+import { Raleway, Open_Sans } from 'next/font/google';
 
 
 const openSans = Open_Sans({
-  subsets: ["latin"],
-  variable: "--font-open-sans",
-  display: "swap",
-})
+  subsets: ['latin'],
+  variable: '--font-open-sans',
+  display: 'swap',
+});
 
 const raleway = Raleway({
-  subsets: ["latin"],
-  variable: "--font-raleway",
-  display: "swap",
-})
+  subsets: ['latin'],
+  variable: '--font-raleway',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'DayZero',
@@ -28,16 +27,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${raleway.variable} ${openSans.variable}  antialiased`}>
-        <ThemeProvider
-          attribute="class"
-          enableSystem={false}
-          disableTransitionOnChange
-        >
+    <html
+      lang="en"
+      className={`${raleway.variable} ${openSans.variable} antialiased`}
+      suppressHydrationWarning
+    >
+      <body>
           {children}
-        </ThemeProvider>
-      </body>
+   </body>
     </html>
   );
 }

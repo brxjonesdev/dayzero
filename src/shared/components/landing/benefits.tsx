@@ -1,4 +1,5 @@
-import { Badge } from "../shadcn/ui/badge"
+import { Badge } from "../shadcn/ui/badge";
+
 
 export default function Benefits() {
   return (
@@ -40,7 +41,7 @@ export default function Benefits() {
               Gratitude Practice
             </h2>
             <p className="text-sm leading-relaxed tracking-normal text-muted-foreground max-w-xl text-left">
-              Develop a habit of noticing and appreciating life's meaningful moments.
+              Develop a habit of noticing and appreciating life&apos;s meaningful moments.
             </p>
           </div>
           <div className="flex gap-0 flex-col justify-between p-5 rounded-md border-2">

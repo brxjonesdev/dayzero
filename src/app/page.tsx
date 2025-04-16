@@ -1,4 +1,4 @@
-'usec client';
+
 import Benefits from '@/shared/components/landing/benefits';
 import LandingFeatures from '@/shared/components/landing/features';
 import LandingHeader from '@/shared/components/landing/header';

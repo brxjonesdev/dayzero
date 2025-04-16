@@ -1,5 +1,7 @@
-import type * as React from "react"
-import {Settings } from "lucide-react"
+"use client"
+
+import React from "react"
+import { Settings } from "lucide-react"
 
 import Filters from "@/features/filtering/components/filters"
 import UserDetails from "@/features/journaling/components/user-details"
@@ -15,9 +17,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-  SidebarSeparator,
 } from "@/shared/components/shadcn/ui/sidebar"
-import MoodGrid from "../../../../features/reflection/components/moodgrid"
+import { SettingsDialog } from "@/features/settings/components/settings-dialog"
 
 export function AppSidebar({
   tags,
@@ -27,12 +28,14 @@ export function AppSidebar({
   tags: any[]
   goals: any[]
 } & React.ComponentProps<typeof Sidebar>) {
+  const [settingsOpen, setSettingsOpen] = React.useState(false)
+
   return (
-    <Sidebar side="left" {...props} >
+    <Sidebar side="left" {...props}>
       <SidebarHeader className="border-b border-sidebar-border">
         <SidebarMenu>
           <SidebarMenuItem>
-          <UserDetails goals={goals} tags={tags} />
+            <UserDetails goals={goals} tags={tags} />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
@@ -47,14 +50,18 @@ export function AppSidebar({
       <SidebarFooter className="flex flex-col gap-4">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton>
-              <Settings className="h-4 w-4" />
+            <SidebarMenuButton onClick={() => {
+              setSettingsOpen(true)
+              console.log("Settings button clicked")
+            }}>
+              <Settings className="mr-2" />
               <span>Settings</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
       <SidebarRail />
+      <SettingsDialog open={settingsOpen} onOpenChange={setSettingsOpen} />
     </Sidebar>
   )
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import { ModeToggle } from '../shadcn/ui/mode-toggle';
 import Settings from './utils/settings';
 
-export default async function JournalHeader() {
+export default function JournalHeader() {
   return (
     <header className="pt-2 px-7 flex justify-between">
       <div className="flex gap-8 items-center">
