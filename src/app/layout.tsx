@@ -1,17 +1,20 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { Onest, Unbounded } from 'next/font/google';
-import { ThemeProvider } from '@/components/shadcn/ui/theme-provider';
+import { Raleway, Open_Sans } from "next/font/google"
+import { ThemeProvider } from '@/shared/components/shadcn/ui/theme-provider';
 
-const onest = Onest({
-  subsets: ['latin'],
-  variable: '--font-onest',
-});
 
-const unbounded = Unbounded({
-  subsets: ['latin'],
-  variable: '--font-unbounded',
-});
+const openSans = Open_Sans({
+  subsets: ["latin"],
+  variable: "--font-open-sans",
+  display: "swap",
+})
+
+const raleway = Raleway({
+  subsets: ["latin"],
+  variable: "--font-raleway",
+  display: "swap",
+})
 
 export const metadata: Metadata = {
   title: 'DayZero',
@@ -26,7 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${unbounded.variable} ${onest.variable} } antialiased`}>
+      <body className={`${raleway.variable} ${openSans.variable}  antialiased`}>
         <ThemeProvider
           attribute="class"
           enableSystem={false}

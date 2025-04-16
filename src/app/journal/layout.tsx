@@ -1,11 +1,14 @@
-import JournalHeader from '@/components/journal/header';
-import React from 'react';
+import { SidebarProvider } from "@/shared/components/shadcn/ui/sidebar"
+import type React from "react"
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <section className="max-w-[96rem] mx-auto px-4 h-dvh flex flex-col">
-      <JournalHeader />
-      {children}
-    </section>
-  );
+    <html lang="en">
+      <body>
+        <SidebarProvider>
+          {children}
+        </SidebarProvider>
+      </body>
+    </html>
+  )
 }
