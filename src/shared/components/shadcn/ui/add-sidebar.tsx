@@ -2,8 +2,6 @@
 
 import React from "react"
 import { Settings } from "lucide-react"
-
-import Filters from "@/features/filtering/components/filters"
 import UserDetails from "@/features/journaling/components/user-details"
 import {
   Sidebar,
@@ -19,14 +17,15 @@ import {
   SidebarRail,
 } from "@/shared/components/shadcn/ui/sidebar"
 import { SettingsDialog } from "@/features/settings/components/settings-dialog"
+import { Goal, Tag } from "@/utils/types"
 
 export function AppSidebar({
   tags,
   goals,
   ...props
 }: {
-  tags: any[]
-  goals: any[]
+  tags: Tag[]
+  goals: Goal[]
 } & React.ComponentProps<typeof Sidebar>) {
   const [settingsOpen, setSettingsOpen] = React.useState(false)
 
@@ -43,7 +42,7 @@ export function AppSidebar({
         <SidebarGroup>
           <SidebarGroupLabel>Filters</SidebarGroupLabel>
           <SidebarGroupContent>
-            <Filters tags={tags} goals={goals} />
+            
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>

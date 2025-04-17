@@ -296,7 +296,7 @@ export default function JournalEntryForm({
     <>
       <Dialog open={isOpen}>
         <DialogTrigger asChild>
-          <Button className="w-full text-xs"  size="sm" onClick={handleOpen}>
+          <Button className="w-full text-sm font-heading" onClick={handleOpen}>
             <Plus />
             Add Entry
           </Button>

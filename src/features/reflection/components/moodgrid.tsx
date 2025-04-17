@@ -24,8 +24,8 @@ export default function MoodGrid({ entries }: { entries: Entry[] }) {
     });
   }, [year]);
 
-  const entryColor = 'bg-cyan-500 dark:bg-fuchsia-600';
-  const noEntryColor = 'bg-gray-100 dark:bg-gray-700';
+  const entryColor = 'bg-primary';
+  const noEntryColor = 'bg-primary-foreground';
 
   const getColorForDay = (date: Date) => {
     const entry = entries.find((e) => isSameDay(new Date(e.date), date));
@@ -42,9 +42,9 @@ export default function MoodGrid({ entries }: { entries: Entry[] }) {
   };
 
   return (
-    <div className="flex-1  hidden xl:block font-onest">
-      <div className="p-4">
-        <div className="flex justify-between items-center mb-4 gap-8">
+    <div className="flex-1 hidden xl:block font-body p-4">
+      <div className="">
+        <div className="flex justify-between items-center mb-6 gap-8">
           <h2 className="text-xl md:text-2xl font-bold">{year}</h2>
           <div className="flex gap-3">
             <Button
@@ -63,13 +63,13 @@ export default function MoodGrid({ entries }: { entries: Entry[] }) {
             </Button>
           </div>
         </div>
-        <div className="grid grid-cols-1 gap-4">
+        <div className="grid grid-cols-1 gap-6">
           {months.map((month) => (
-            <div key={month.toString()} className="border rounded-md p-2">
-              <h3 className="text-base md:text-lg font-semibold mb-2">
+            <div key={month.toString()} className="border rounded-md p-4">
+              <h3 className="text-base md:text-lg font-semibold mb-4">
                 {format(month, 'MMMM')}
               </h3>
-              <div className="grid grid-cols-7 gap-1">
+              <div className="grid grid-cols-7 gap-2">
                 {eachDayOfInterval({
                   start: month,
                   end: new Date(year, month.getMonth() + 1, 0),
@@ -88,7 +88,7 @@ export default function MoodGrid({ entries }: { entries: Entry[] }) {
                           : 'bg-white'
                       } rounded-sm`}
                     ></div>
-                    <span className="text-[0.5rem] md:text-xs mt-1">
+                    <span className="text-[0.5rem] md:text-xs mt-2">
                       {format(day, 'd')}
                     </span>
                   </div>

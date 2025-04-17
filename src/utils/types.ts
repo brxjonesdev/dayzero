@@ -1,7 +1,7 @@
 export type Entry = {
   id: number;
   created_at: string; // ISO string for "timestamp with time zone"
-  date: string; // ISO string for "timestamp with time zone"
+  date: string | Date; // ISO string for "timestamp with time zone"
   user_id?: string | null; // Nullable text
   content?: string | null; // Nullable text
   mood?: string | null; // Nullable text

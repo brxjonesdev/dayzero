@@ -3,7 +3,6 @@ import React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { format, parseISO } from 'date-fns';
 import { Button } from '@/shared/components/shadcn/ui/button';
-import MoodGrid from '../../../../../features/reflection/components/moodgrid';
 import EntryCard from './entry-card';
 import { Entry, Goal, Tag } from '@/utils/types';
 
@@ -42,7 +41,7 @@ export default function Journal({
     }
 
     // Check date
-    if (date && format(parseISO(entry.date), 'yyyy-MM-dd') !== date) {
+    if (date && format(parseISO(entry.date as string), 'yyyy-MM-dd') !== date) {
       return false;
     }
 
@@ -56,33 +55,22 @@ export default function Journal({
 
   return (
     <div className="flex-1 flex flex-col gap-4 overflow-y-auto px-4 py-6 lg:py-8 lg:px-8">
-        <div className="flex justify-between items-center">
-          <h2 className="font-unbounded text-lg font-bold">Your Journal</h2>
-          {searchParams.toString() && (
-            <Button
-              variant="link"
-              className="text-sm font-onest"
-              onClick={() => router.push(window.location.pathname)}
-            >
-              Clear Filters
-            </Button>
-          )}
-        </div>
-        {filteredEntries.map((entry) => (
-          <EntryCard key={entry.id} entry={entry} goals={goals} tags={tags} />
-        ))}
-        {filteredEntries.length === 0 && (
-          <div className="bg-black/10 dark:bg-white/10 rounded-3xl flex-1 flex items-center justify-center flex-col text-muted-foreground">
-            <p className="font-unbounded text-center">No entries found</p>
-            <Button
-              variant="link"
-              className="text-sm font-onest"
-              onClick={() => router.push(window.location.pathname)}
-            >
-              Clear Tags
-            </Button>
-          </div>
-        )}
+      {filteredEntries.length > 0 ? (
+      filteredEntries.map((entry) => (
+        <EntryCard key={entry.id} entry={entry} goals={goals} tags={tags} />
+      ))
+      ) : (
+      <div className="bg-black/10 dark:bg-white/10 rounded-3xl flex-1 flex items-center justify-center flex-col text-muted-foreground">
+        <p className="font-heading text-center font-semibold">No entries found</p>
+        <Button
+        variant="link"
+        className="text-sm font-body"
+        onClick={() => router.push(window.location.pathname)}
+        >
+        Clear Tags
+        </Button>
       </div>
+      )}
+    </div>
   );
 }
