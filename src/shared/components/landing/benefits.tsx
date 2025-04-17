@@ -6,7 +6,7 @@ export default function Benefits() {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 font-body">
       <div className="flex gap-3 flex-col items-start">
         <div>
-          <Badge className="bg-cyan-500 dark:bg-purple-300">Benefits of Mindful Journaling</Badge>
+          <Badge className="font-body bg-primary text-black">Benefits of Mindful Journaling</Badge>
         </div>
         <div className="flex gap-2 flex-col">
           <h2 className="text-lg md:text-2xl lg:text-3xl tracking-tight lg:max-w-lg font-medium text-left font-heading">

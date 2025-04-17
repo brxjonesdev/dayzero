@@ -15,7 +15,7 @@ export default function LandingFeatures() {
         <div className="flex gap-8 flex-col">
           <div className="flex gap-3 flex-col">
             <div>
-              <Badge variant="outline" className="font-body bg-cyan-500 dark:bg-purple-300 text-white dark:text-black">
+              <Badge variant="outline" className="font-body bg-primary text-black">
                 We&lsquo;re Live!
               </Badge>
             </div>
@@ -32,21 +32,21 @@ export default function LandingFeatures() {
             <div className="flex flex-row gap-4 items-start">
               <Check className="w-4 h-4 mt-1 text-primary" />
               <div className="flex flex-col gap-1">
-                <p className="text-cyan-500 dark:text-purple-300 font-medium">Distraction-Free Writing</p>
+                <p className="text-primary-foreground bg-primary w-fit rounded-xl p-1 px-2.5 font-medium text-sm">Distraction-Free Writing</p>
                 <p className="text-muted-foreground text-sm">Capture your thoughts in a clean, minimal interface.</p>
               </div>
             </div>
             <div className="flex flex-row gap-4 items-start">
               <Check className="w-4 h-4 mt-1 text-primary" />
               <div className="flex flex-col gap-1">
-                <p className="text-cyan-500 dark:text-purple-300 font-medium">Mindful Reflection</p>
+                <p className="text-primary-foreground bg-primary w-fit rounded-xl p-1 px-2.5 font-medium text-sm">Mindful Reflection</p>
                 <p className="text-muted-foreground text-sm">Track emotions and personal growth over time.</p>
               </div>
             </div>
             <div className="flex flex-row gap-4 items-start">
               <Check className="w-4 h-4 mt-1 text-primary" />
               <div className="flex flex-col gap-1">
-              <p className="text-cyan-500 dark:text-purple-300 font-medium">Daily Repeition</p>
+              <p className="text-primary-foreground bg-primary w-fit rounded-xl p-1 px-2.5 font-medium text-sm">Daily Repeition</p>
               <p className="text-muted-foreground text-sm">Build consistency with small, mindful actions every day.</p>
               </div>
             </div>
